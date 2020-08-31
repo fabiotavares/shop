@@ -8,7 +8,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // obtendo o produto através do provider e não mais como parâmetro
-    final Product product = Provider.of<Product>(context /* , listen: false */);
+    final Product product = Provider.of<Product>(context, listen: false);
     // * o padrão é true, ou seja, quero escutar as modificações no objeto;
     // mas posso querer parar de escutar (quando envolver apenas finais)
     // então, basta marcar como false esse parâmetro
@@ -31,11 +31,17 @@ class ProductItem extends StatelessWidget {
         ),
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: IconButton(
-            icon: Icon(
-                product.isFavorite ? Icons.favorite : Icons.favorite_border),
-            color: Theme.of(context).accentColor,
-            onPressed: () => product.toggleFavorite(),
+          leading: Consumer<Product>(
+            child: Text('Nunca muda'),
+            // ouvindo só aqui (cirúrgico!)
+            builder: (ctx, product, child) => IconButton(
+              // posso usar aqui o child para referenciar uma parte que não
+              // deve mudar dentro desse Consumer
+              icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
+              color: Theme.of(context).accentColor,
+              onPressed: () => product.toggleFavorite(),
+            ),
           ),
           title: Text(
             product.title,
