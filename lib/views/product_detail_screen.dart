@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:shop/models/product.dart';
+import 'package:shop/providers/product.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   @override
@@ -19,7 +19,35 @@ class ProductDetailScreen extends StatelessWidget {
           onTap: () => product.toggleFavorite(),
         ),
       ),
-      body: Container(),
+      body: SingleChildScrollView(
+        // uso quando a tela vai ocupar mais do que é visível
+        child: Column(
+          children: [
+            Container(
+              height: 300,
+              width: double.infinity,
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'R\$ ${product.price}',
+              style: TextStyle(color: Colors.grey, fontSize: 20),
+            ),
+            SizedBox(height: 10),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Text(
+                product.description,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shop/providers/products.dart';
-import 'package:shop/widgets/product_grid.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/providers/cart.dart';
+import 'package:shop/utils/app_routes.dart';
+import 'package:shop/widgets/app_drawer.dart';
+import 'package:shop/widgets/badge.dart';
+import 'package:shop/widgets/product_grid.dart';
 
 // tela com um GridView para exibir os produtos
 
@@ -58,9 +61,23 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               // }
             },
           ),
+          Consumer<Cart>(
+            // código que não vai mudar
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.CART);
+              },
+            ),
+            builder: (_, cart, child) => Badge(
+              value: cart.itemsCount.toString(),
+              child: child,
+            ),
+          ),
         ],
       ),
       body: ProductGrid(_showFavoritesOnly),
+      drawer: AppDrawer(),
     );
   }
 }

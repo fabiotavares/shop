@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/providers/cart.dart';
 
-import 'package:shop/models/product.dart';
+import 'package:shop/providers/product.dart';
 import 'package:shop/utils/app_routes.dart';
 
 class ProductItem extends StatelessWidget {
@@ -9,9 +10,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // obtendo o produto através do provider e não mais como parâmetro
     final Product product = Provider.of<Product>(context, listen: false);
-    // * o padrão é true, ou seja, quero escutar as modificações no objeto;
-    // mas posso querer parar de escutar (quando envolver apenas finais)
-    // então, basta marcar como false esse parâmetro
+    final Cart cart = Provider.of<Cart>(context, listen: false);
 
     return ClipRRect(
       // para ter as bordas arredondadas
@@ -50,7 +49,9 @@ class ProductItem extends StatelessWidget {
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
             color: Theme.of(context).accentColor,
-            onPressed: () {},
+            onPressed: () {
+              cart.addItem(product);
+            },
           ),
         ),
       ),
