@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shop/providers/cart.dart';
 import 'package:shop/providers/orders.dart';
-import 'package:shop/widgets/cart_item_widget.dart';
 
 class OrderWidtget extends StatefulWidget {
   final Order order;
@@ -23,7 +21,7 @@ class _OrderWidtgetState extends State<OrderWidtget> {
       child: Column(
         children: [
           ListTile(
-            title: Text('R\$ ${widget.order.total}'),
+            title: Text('R\$ ${widget.order.total.toStringAsFixed(2)}'),
             subtitle:
                 Text(DateFormat('dd MM yyyy hh:mm').format(widget.order.date)),
             trailing: IconButton(
@@ -50,14 +48,14 @@ class _OrderWidtgetState extends State<OrderWidtget> {
                       Text(
                         product.title,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         '${product.quantity} x R\$ ${product.price}',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
@@ -65,7 +63,7 @@ class _OrderWidtgetState extends State<OrderWidtget> {
                   );
 
                   // um aoutra opção de apresentação...
-                  return CartItemWidtget(product);
+                  //return CartItemWidtget(product);
                 }).toList(),
               ),
             ),
