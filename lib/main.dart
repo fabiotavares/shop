@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false, // retirando a tarja de debug
         title: 'Minha Loja',
         theme: ThemeData(
           primarySwatch: Colors.purple,
