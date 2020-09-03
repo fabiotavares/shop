@@ -6,8 +6,9 @@ class ProductFormScreen extends StatefulWidget {
 }
 
 class _ProductFormScreenState extends State<ProductFormScreen> {
-  //objeto para controlar o foco do campo preço
+  //objetos de controle do foco do campo preço (precisa do dispose no final)
   final _priceFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +37,30 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 keyboardType: TextInputType.numberWithOptions(
                   decimal: true,
                 ),
+                onFieldSubmitted: (_) {
+                  // executado quando o campo for submetido
+                  // passando o focus para o campo de preço
+                  FocusScope.of(context).requestFocus(_descriptionFocusNode);
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Descrição'),
+                maxLines: 3,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.next,
+                focusNode: _descriptionFocusNode,
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _priceFocusNode.dispose();
+    _descriptionFocusNode.dispose();
   }
 }
