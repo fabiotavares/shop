@@ -44,6 +44,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   void _saveForm() {
     // chamada quando o formulário for submetido
 
+    // método validate: chma o validator de cada campo do formulário
+    bool isValid = _form.currentState.validate();
+    if (!isValid) {
+      // se não passou pela validação, não continue
+      return;
+    }
+
     // método save: chama o onSave de cada campo do formulário
     _form.currentState.save();
 
@@ -78,6 +85,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         padding: const EdgeInsets.all(15.0),
         child: Form(
           key: _form,
+          // autovalidate: true, // é uma possibilidade
           child: ListView(
             children: [
               TextFormField(
@@ -87,6 +95,20 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   // executado quando o campo for submetido
                   // passando o focus para o campo de preço
                   FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                validator: (value) {
+                  // é chamada quando a validação do formulário for disparada
+                  // retorna uma string
+                  // se retornar null significa que não há erro (foi validado)
+                  if (value.trim().isEmpty) {
+                    return 'Informe um título válido!';
+                  }
+
+                  if (value.trim().length < 3) {
+                    return 'Informe um título com no mínimo 3 letras!';
+                  }
+
+                  return null;
                 },
                 onSaved: (value) => _formData['title'] = value,
               ),
