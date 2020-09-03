@@ -10,6 +10,10 @@ class Products with ChangeNotifier {
   // spread), para evitar acesso direto ao seu conteúdo
   List<Product> get items => [..._items];
 
+  int get itemsCount {
+    return _items.length;
+  }
+
   // lista de favoritos somente
   List<Product> get favoriteItems {
     return _items.where((prod) => prod.isFavorite).toList();
