@@ -27,6 +27,33 @@ class CartItemWidtget extends StatelessWidget {
         ),
       ),
       direction: DismissDirection.endToStart,
+      confirmDismiss: (_) {
+        // conforma a operação de delete
+        return showDialog(
+          // retorna um Future
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Tem certeza?'),
+            content: Text('Quer remover o item do carrinho?'),
+            actions: [
+              FlatButton(
+                child: Text('Não'),
+                onPressed: () {
+                  //é preciso fechar a view com pop passando false
+                  Navigator.of(ctx).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('Sim'),
+                onPressed: () {
+                  //é preciso fechar a view com pop passando true
+                  Navigator.of(ctx).pop(true);
+                },
+              ),
+            ],
+          ),
+        );
+      },
       onDismissed: (_) {
         Provider.of<Cart>(context, listen: false)
             .removeItem(cartItem.productId);
