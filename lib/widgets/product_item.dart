@@ -50,6 +50,24 @@ class ProductItem extends StatelessWidget {
             icon: Icon(Icons.shopping_cart),
             color: Theme.of(context).accentColor,
             onPressed: () {
+              // isso vai retornar o scaffold existente na hierarquia de context
+              // e vai encontrar o objeto em ProductOverviewScreen
+              //Scaffold.of(context).openDrawer();
+              Scaffold.of(context)
+                  .hideCurrentSnackBar(); // fecha a anterior logo
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Produto adicionado com sucesso!'),
+                  duration: Duration(seconds: 3),
+                  action: SnackBarAction(
+                    label: 'DESFAZER',
+                    onPressed: () {
+                      // remove uma unidade do item (ou o item se tiver apenas 1)
+                      cart.removeSingleItem(product.id);
+                    },
+                  ),
+                ),
+              );
               cart.addItem(product);
             },
           ),
