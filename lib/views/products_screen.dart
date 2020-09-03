@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/providers/products.dart';
 import 'package:shop/widgets/app_drawer.dart';
+import 'package:shop/widgets/product_item.dart';
 
 class ProductsScreen extends StatelessWidget {
   @override
@@ -22,9 +23,12 @@ class ProductsScreen extends StatelessWidget {
         padding: EdgeInsets.all(8),
         child: ListView.builder(
           itemCount: products.itemsCount,
-          itemBuilder: (ctx, idx) {
-            return Text('Teste');
-          },
+          itemBuilder: (ctx, idx) => Column(
+            children: [
+              ProductItem(products.items[idx]),
+              Divider(),
+            ],
+          ),
         ),
       ),
     );
