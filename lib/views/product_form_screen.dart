@@ -47,7 +47,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 decoration: InputDecoration(labelText: 'Descrição'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
-                textInputAction: TextInputAction.next,
                 focusNode: _descriptionFocusNode,
               ),
             ],
