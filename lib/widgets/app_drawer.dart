@@ -38,7 +38,7 @@ class AppDrawer extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(Icons.payment),
-            title: Text('Produtos'),
+            title: Text('Gerenciar Produtos'),
             onTap: () =>
                 // abre produtos substituindo esta tela, pra evitar o empilhamento
                 Navigator.pushReplacementNamed(context, AppRoutes.PRODUCTS),
