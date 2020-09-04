@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop/data/dummy_data.dart';
 import 'package:shop/providers/product.dart';
 
 class Products with ChangeNotifier {
   final _url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
-  List<Product> _items = DUMMY_PRODUCTS;
+  List<Product> _items = [];
   // bool _showFavoriteOnly = false;
 
   // esse get retorna uma cópia da lista (através do operador
@@ -26,7 +25,27 @@ class Products with ChangeNotifier {
   // obtendo a lista de produtos do servidor
   Future<void> loadProducts() async {
     final response = await http.get(_url);
-    print(json.decode(response.body));
+    // decodificando a resposta para obter a lista de produtos
+    Map<String, dynamic> data = json.decode(response.body);
+    if (data != null) {
+      // limpar lista
+      _items = [];
+      // pegar dados atualizados
+      data.forEach((productId, productData) {
+        _items.add(Product(
+          id: productId,
+          title: productData['title'],
+          description: productData['description'],
+          price: productData['price'],
+          imageUrl: productData['imageUrl'],
+          isFavorite: productData['isFavorite'],
+        ));
+      });
+      // atualizar exibição dos dados
+      notifyListeners();
+    }
+    // também funciona sem esse return
+    return Future.value();
   }
 
   Future<void> addProduct(Product newProduct) async {
