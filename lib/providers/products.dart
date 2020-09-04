@@ -35,6 +35,27 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  bool updateProduct(Product product) {
+    // o produto e seu id precisam ser diferentes de nulos para prosseguir
+    if (product == null || product.id == null) {
+      return false;
+    }
+
+    // tenta localizar o produto na lista de produtos
+    final index = _items.indexWhere((element) => element.id == product.id);
+
+    // se o index == -1 significa que não encontrou o produto
+    if (index == -1) {
+      return false;
+    }
+
+    // caso contrário, posso executar a atualização
+    _items[index] = product;
+    notifyListeners();
+
+    return true;
+  }
+
   // método compartilhando globalmente a informação de favoritos
 
   // List<Product> get items {

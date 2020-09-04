@@ -20,8 +20,28 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   @override
   void initState() {
     super.initState();
+
     // necessário para saber quando perdeu o foco e atualizar a imagem
     _imageUrlFocusNode.addListener(_updateImage);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // verificar se um produto foi passado para edição
+    final product = ModalRoute.of(context).settings.arguments as Product;
+
+    // se houver um produto para edição, deve-se atualizar o map com seus dados
+    if (product != null) {
+      _formData['id'] = product.id;
+      _formData['title'] = product.title;
+      _formData['description'] = product.description;
+      _formData['price'] = product.price;
+      _formData['imageUrl'] = product.imageUrl;
+      // o controle precisa ser inicializado aqui para refletir no formulário
+      _imageUrlController.text = _formData['imageUrl'];
+    }
   }
 
   @override
@@ -69,7 +89,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
     // neste ponto eu tenho o map _formData com todos os dados digitados
     // criando o objeto a partir do map criando antes
-    final newProduct = Product(
+    final product = Product(
+      // o id só existirá caso um produto tenha sido passado para edição
+      id: _formData['id'],
       title: _formData['title'],
       price: _formData['price'],
       description: _formData['description'],
@@ -80,7 +102,16 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     // IMPORTANTE: preciso passar listen: false pra funcionar
     // isso pois estou fora do build (fora da árvore de widgets)
     // RESUMINDO: posso usar o Provider fora do build, DESDE que não use listen
-    Provider.of<Products>(context, listen: false).addProduct(newProduct);
+    final products = Provider.of<Products>(context, listen: false);
+
+    // se não houver um id, devo chamar addProduct
+    if (_formData['id'] == null) {
+      products.addProduct(product);
+    } else {
+      // caso contrário, devo atualizar o produto passado
+      products.updateProduct(product);
+    }
+
     // fechando a tela de formulário
     Navigator.of(context).pop();
   }
@@ -105,6 +136,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _formData['title'],
                 decoration: InputDecoration(labelText: 'Título'),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
@@ -127,6 +159,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 onSaved: (value) => _formData['title'] = value,
               ),
               TextFormField(
+                initialValue: _formData['price'] != null
+                    ? _formData['price'].toString()
+                    : '',
                 decoration: InputDecoration(labelText: 'Preço'),
                 textInputAction: TextInputAction.next,
                 focusNode: _priceFocusNode,
@@ -151,6 +186,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _formData['description'],
                 decoration: InputDecoration(labelText: 'Descrição'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
@@ -172,6 +208,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   Expanded(
                     // sem isso dá problema
                     child: TextFormField(
+                      // não posso usar aqui o initialValue pois estou usando
+                      // controller. Neste caso, preciso inicializar por ele.
+                      // initialValue: _formData['imageUrl'],
                       decoration: InputDecoration(labelText: 'URL da Imagem'),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
