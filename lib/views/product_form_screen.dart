@@ -34,14 +34,18 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
     // se houver um produto para edição, deve-se atualizar o map com seus dados
     // apenas na primeira vez, ou seja, quando _formData for vazio
-    if (_formData.isEmpty && product != null) {
-      _formData['id'] = product.id;
-      _formData['title'] = product.title;
-      _formData['description'] = product.description;
-      _formData['price'] = product.price;
-      _formData['imageUrl'] = product.imageUrl;
-      // o controle precisa ser inicializado aqui para refletir no formulário
-      _imageUrlController.text = _formData['imageUrl'];
+    if (_formData.isEmpty) {
+      if (product != null) {
+        _formData['id'] = product.id;
+        _formData['title'] = product.title;
+        _formData['description'] = product.description;
+        _formData['price'] = product.price;
+        _formData['imageUrl'] = product.imageUrl;
+        // o controle precisa ser inicializado aqui para refletir no formulário
+        _imageUrlController.text = _formData['imageUrl'];
+      } else {
+        // garantir que não aparece null em valor quando for cadastrar novo produto
+      }
     }
   }
 
@@ -160,9 +164,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 onSaved: (value) => _formData['title'] = value,
               ),
               TextFormField(
-                initialValue: _formData['price'] != null
-                    ? _formData['price'].toString()
-                    : '',
+                initialValue: _formData['price'],
                 decoration: InputDecoration(labelText: 'Preço'),
                 textInputAction: TextInputAction.next,
                 focusNode: _priceFocusNode,
