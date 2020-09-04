@@ -29,7 +29,7 @@ class Products with ChangeNotifier {
     Map<String, dynamic> data = json.decode(response.body);
     if (data != null) {
       // limpar lista
-      _items = [];
+      _items.clear();
       // pegar dados atualizados
       data.forEach((productId, productData) {
         _items.add(Product(
