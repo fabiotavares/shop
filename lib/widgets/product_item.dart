@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/exceptions/http_exception.dart';
 import 'package:shop/providers/product.dart';
 import 'package:shop/providers/products.dart';
 import 'package:shop/utils/app_routes.dart';
@@ -12,6 +13,9 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // necessário pra funcionar com o último elemento da lista (não entendi)
+    final scaffold = Scaffold.of(context);
+
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(product.imageUrl),
@@ -55,12 +59,22 @@ class ProductItem extends StatelessWidget {
                       ),
                     ],
                   ),
-                ).then((confirmou) {
+                ).then((confirmou) async {
                   if (confirmou) {
                     // remover um produto do cadastro
                     // listen = false pois estou chamando fora do build dele
-                    Provider.of<Products>(context, listen: false)
-                        .removeItem(product.id);
+                    try {
+                      await Provider.of<Products>(context, listen: false)
+                          .removeItem(product.id);
+                    } on HttpException catch (e) {
+                      //exibir mensagem de erro com snackbar
+                      scaffold.showSnackBar(
+                        SnackBar(
+                          content: Text(e.toString()),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
                   }
                 });
               },

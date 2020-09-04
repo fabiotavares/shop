@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop/exceptions/http_exception.dart';
 import 'package:shop/providers/product.dart';
 
 class Products with ChangeNotifier {
@@ -133,6 +134,8 @@ class Products with ChangeNotifier {
       // devo retornar com a exibição do produto removido da lista
       _items.insert(index, product);
       notifyListeners();
+      // lançar excessão para ser tratado onde chamou
+      throw HttpException('Ocorreu um erro na exclusão do produto');
     }
 
     // outra forma de fazer mais direta
