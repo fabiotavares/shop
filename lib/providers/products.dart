@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +6,7 @@ import 'package:shop/data/dummy_data.dart';
 import 'package:shop/providers/product.dart';
 
 class Products with ChangeNotifier {
+  final _url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
   List<Product> _items = DUMMY_PRODUCTS;
   // bool _showFavoriteOnly = false;
 
@@ -23,16 +23,20 @@ class Products with ChangeNotifier {
     return _items.where((prod) => prod.isFavorite).toList();
   }
 
+  // obtendo a lista de produtos do servidor
+  Future<void> loadProducts() async {
+    final response = await http.get(_url);
+    print(json.decode(response.body));
+  }
+
   Future<void> addProduct(Product newProduct) async {
     // trabalhando com requisições http
-    const url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
-
     // vou retornar um Future da forma abaixo, para fechar o formulário apenas
     // quando a requisição tiver sido completada no servidor
     final response = await http.post(
       // await faz aguardar a execução do bloco
       // response tem a chave da inserção do produto
-      url,
+      _url,
       body: json.encode({
         'title': newProduct.title,
         'price': newProduct.price,
