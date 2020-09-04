@@ -23,14 +23,15 @@ class Products with ChangeNotifier {
     return _items.where((prod) => prod.isFavorite).toList();
   }
 
-  Future<void> addProduct(Product newProduct) {
+  Future<void> addProduct(Product newProduct) async {
     // trabalhando com requisições http
-    const url = 'https://flutter-cod3r-6b033.firebaseio.com/products';
+    const url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
 
     // vou retornar um Future da forma abaixo, para fechar o formulário apenas
     // quando a requisição tiver sido completada no servidor
-    return http
-        .post(
+    final response = await http.post(
+      // await faz aguardar a execução do bloco
+      // response tem a chave da inserção do produto
       url,
       body: json.encode({
         'title': newProduct.title,
@@ -39,29 +40,21 @@ class Products with ChangeNotifier {
         'imageUrl': newProduct.imageUrl,
         'isFavorite': newProduct.isFavorite,
       }),
-    )
-        .then((response) {
-      //código executado só depois de cadastrado no servidor web
-      // adiciona um novo produto igual ao passado e com a geração do id aqui
-      _items.add(Product(
-        // a resposta do firebase traz um corpo com a chave criada lá (name)
-        id: json.decode(response.body)['name'],
-        title: newProduct.title,
-        description: newProduct.description,
-        price: newProduct.price,
-        imageUrl: newProduct.imageUrl,
-      ));
-      // houve uma alteração na lista que precisa ser notificada
-      // usando um método da classe mixins ChangeNotifier
-      notifyListeners();
-    })/* .catchError((error) {
-      //capturando erro no servidor
-      print(error);
-      // passando o erro pra ser tratado na sequência
-      throw (error);
-      // IMPORTANTE: se eu não tratar o erro aqui, ele poderá ser captura pra
-      // frente. Mas se tratar aqui e quiser tratar na frente, preciso relançar
-    }) */;
+    );
+
+    //código executado só depois de cadastrado no servidor web
+    // adiciona um novo produto igual ao passado e com a geração do id aqui
+    _items.add(Product(
+      // a resposta do firebase traz um corpo com a chave criada lá (name)
+      id: json.decode(response.body)['name'],
+      title: newProduct.title,
+      description: newProduct.description,
+      price: newProduct.price,
+      imageUrl: newProduct.imageUrl,
+    ));
+    // houve uma alteração na lista que precisa ser notificada
+    // usando um método da classe mixins ChangeNotifier
+    notifyListeners();
   }
 
   bool updateProduct(Product product) {

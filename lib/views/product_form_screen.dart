@@ -80,7 +80,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         (endsWithPng || endsWithJpg || endsWithJpeg);
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     // chamada quando o formulário for submetido
 
     // método validate: chma o validator de cada campo do formulário
@@ -118,10 +118,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
     // se não houver um id, devo chamar addProduct
     if (_formData['id'] == null) {
-      products.addProduct(product).catchError((error) {
-        // tratando o erro aqui através de uma mensagem para o usuário
-        // aqui é preciso ter <Null> para coincidor com o retorno do error
-        return showDialog(
+      // execução quando estiver cadastrando novo produto
+      try {
+        // aguarde a execução de adicionar produto no servidor
+        await products.addProduct(product);
+        // fechando a tela do formulário
+        Navigator.of(context).pop();
+      } catch (_) {
+        // se ocorreu algum erro, informe o usuário através de um alerta
+        await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('Ocorreu um erro!'),
@@ -129,20 +134,20 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             actions: [
               FlatButton(
                 // só fecha a tela do alerta
-                onPressed: () => Navigator.of(context).pop(),
                 child: Text('Ok'),
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ],
           ),
         );
-      }).then((_) {
-        // indicando que o processamento terminou
+      } finally {
+        // no final (com ou sem erro) devo terminar a animação...
         setState(() {
           _isLoading = false;
         });
-        // fechando a tela de formulário só quando a Future retornar
-        Navigator.of(context).pop();
-      });
+      }
+
+      // execução quando estiver editando um produto
     } else {
       // caso contrário, devo atualizar o produto passado
       products.updateProduct(product);
