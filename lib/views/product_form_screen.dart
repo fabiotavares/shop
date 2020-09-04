@@ -116,47 +116,36 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     // RESUMINDO: posso usar o Provider fora do build, DESDE que não use listen
     final products = Provider.of<Products>(context, listen: false);
 
-    // se não houver um id, devo chamar addProduct
-    if (_formData['id'] == null) {
-      // execução quando estiver cadastrando novo produto
-      try {
-        // aguarde a execução de adicionar produto no servidor
+    try {
+      // tenta adicionar novo produto ou editar existente
+      if (_formData['id'] == null) {
         await products.addProduct(product);
-        // fechando a tela do formulário
-        Navigator.of(context).pop();
-      } catch (_) {
-        // se ocorreu algum erro, informe o usuário através de um alerta
-        await showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('Ocorreu um erro!'),
-            content: Text('Ocorreu um erro ao salvar o produto!'),
-            actions: [
-              FlatButton(
-                // só fecha a tela do alerta
-                child: Text('Ok'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-        );
-      } finally {
-        // no final (com ou sem erro) devo terminar a animação...
-        setState(() {
-          _isLoading = false;
-        });
+      } else {
+        await products.updateProduct(product);
       }
-
-      // execução quando estiver editando um produto
-    } else {
-      // caso contrário, devo atualizar o produto passado
-      products.updateProduct(product);
-      // indicando que o processamento terminou
+      // fehca a tela de formulário após operação realizada com sucesso
+      Navigator.of(context).pop();
+    } catch (_) {
+      // exibe mensagem de erro para o usuário
+      await showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Ocorreu um erro!'),
+          content: Text('Ocorreu um erro ao salvar o produto!'),
+          actions: [
+            FlatButton(
+              // só fecha a tela do alerta
+              child: Text('Ok'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+      // pare o indicador de progresso e permanece na tela para nova tentativa
       setState(() {
         _isLoading = false;
       });
-      Navigator.of(context).pop();
-    }
+    } 
   }
 
   @override

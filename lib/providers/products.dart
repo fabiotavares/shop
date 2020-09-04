@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shop/providers/product.dart';
 
 class Products with ChangeNotifier {
-  final _url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
+  final _baseUrl = 'https://flutter-cod3r-6b033.firebaseio.com/products';
   List<Product> _items = [];
   // bool _showFavoriteOnly = false;
 
@@ -24,7 +24,7 @@ class Products with ChangeNotifier {
 
   // obtendo a lista de produtos do servidor
   Future<void> loadProducts() async {
-    final response = await http.get(_url);
+    final response = await http.get('$_baseUrl.json');
     // decodificando a resposta para obter a lista de produtos
     Map<String, dynamic> data = json.decode(response.body);
     if (data != null) {
@@ -55,7 +55,7 @@ class Products with ChangeNotifier {
     final response = await http.post(
       // await faz aguardar a execução do bloco
       // response tem a chave da inserção do produto
-      _url,
+      '$_baseUrl.json',
       body: json.encode({
         'title': newProduct.title,
         'price': newProduct.price,
@@ -64,7 +64,6 @@ class Products with ChangeNotifier {
         'isFavorite': newProduct.isFavorite,
       }),
     );
-
     //código executado só depois de cadastrado no servidor web
     // adiciona um novo produto igual ao passado e com a geração do id aqui
     _items.add(Product(
@@ -80,10 +79,10 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  bool updateProduct(Product product) {
+  Future<bool> updateProduct(Product product) async {
     // o produto e seu id precisam ser diferentes de nulos para prosseguir
     if (product == null || product.id == null) {
-      return false;
+      return Future.value(false);
     }
 
     // tenta localizar o produto na lista de produtos
@@ -91,14 +90,23 @@ class Products with ChangeNotifier {
 
     // se o index == -1 significa que não encontrou o produto
     if (index == -1) {
-      return false;
+      return Future.value(false);
     }
 
     // caso contrário, posso executar a atualização
+    await http.patch(
+      '$_baseUrl/${product.id}.json',
+      body: json.encode({
+        'title': product.title,
+        'price': product.price,
+        'description': product.description,
+        'imageUrl': product.imageUrl,
+      }),
+    );
     _items[index] = product;
     notifyListeners();
 
-    return true;
+    return Future.value(true);
   }
 
   void removeItem(String productId) {
