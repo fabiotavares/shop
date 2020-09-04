@@ -38,7 +38,19 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   void _updateImage() {
     // setState vazio:
     // isso pega os valores atuais das variáveis acima e aplica na tela
-    setState(() {});
+    if (isValidImageUrl(_imageUrlController.text)) {
+      setState(() {});
+    }
+  }
+
+  bool isValidImageUrl(String url) {
+    bool startWithHttp = url.toLowerCase().startsWith('http://');
+    bool startWithHttps = url.toLowerCase().startsWith('https://');
+    bool endsWithPng = url.toLowerCase().endsWith('.png');
+    bool endsWithJpg = url.toLowerCase().endsWith('.jpg');
+    bool endsWithJpeg = url.toLowerCase().endsWith('.Jpeg');
+    return (startWithHttp || startWithHttps) &&
+        (endsWithPng || endsWithJpg || endsWithJpeg);
   }
 
   void _saveForm() {
@@ -100,14 +112,12 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   // é chamada quando a validação do formulário for disparada
                   // retorna uma string
                   // se retornar null significa que não há erro (foi validado)
-                  if (value.trim().isEmpty) {
-                    return 'Informe um título válido!';
-                  }
+                  bool isEmpty = value.trim().isEmpty;
+                  bool isInvalid = value.trim().length < 3;
 
-                  if (value.trim().length < 3) {
-                    return 'Informe um título com no mínimo 3 letras!';
+                  if (isEmpty || isInvalid) {
+                    return 'Informe um título válido com no mínimo 3 caracteres!';
                   }
-
                   return null;
                 },
                 onSaved: (value) => _formData['title'] = value,
@@ -125,6 +135,16 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
                 onSaved: (value) => _formData['price'] = double.parse(value),
+                validator: (value) {
+                  bool isEmpty = value.trim().isEmpty;
+                  var newPrice = double.tryParse(value);
+                  bool isInvalid = newPrice == null || newPrice <= 0;
+
+                  if (isEmpty || isInvalid) {
+                    return 'Informe um preço válido!';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Descrição'),
@@ -132,6 +152,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
                 onSaved: (value) => _formData['description'] = value,
+                validator: (value) {
+                  bool isEmpty = value.trim().isEmpty;
+                  bool isInvalid = value.trim().length < 10;
+
+                  if (isEmpty || isInvalid) {
+                    return 'Informe uma descrição válida com no mínimo 10 caracteres!';
+                  }
+                  return null;
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -150,6 +179,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                         _saveForm();
                       },
                       onSaved: (value) => _formData['imageUrl'] = value,
+                      validator: (value) {
+                        bool isEmpty = value.trim().isEmpty;
+                        bool isInvalid = !isValidImageUrl(value);
+
+                        if (isEmpty || isInvalid) {
+                          return 'Informe uma URL válida!';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   Container(
