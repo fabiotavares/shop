@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/providers/product.dart';
 
@@ -22,6 +24,20 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product newProduct) {
+    // trabalhando com requisições http
+    const url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
+
+    http.post(
+      url,
+      body: json.encode({
+        'title': newProduct.title,
+        'price': newProduct.price,
+        'description': newProduct.description,
+        'imageUrl': newProduct.imageUrl,
+        'isFavorite': newProduct.isFavorite,
+      }),
+    );
+
     // adiciona um novo produto igual ao passado e com a geração do id aqui
     _items.add(Product(
       id: Random().nextDouble().toString(),
