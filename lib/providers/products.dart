@@ -109,7 +109,7 @@ class Products with ChangeNotifier {
     return Future.value(true);
   }
 
-  void removeItem(String productId) {
+  Future<void> removeItem(String productId) async {
     // tenta localizar o produto na lista de produtos
     final index = _items.indexWhere((element) => element.id == productId);
 
@@ -118,34 +118,24 @@ class Products with ChangeNotifier {
       return;
     }
 
-    // remove o produto da lista
-    _items.removeAt(index);
+    // obtem o objeto que deve ser removido
+    final product = _items[index];
+
+    // remove o produto da lista primeiramente
+    _items.remove(product);
+    notifyListeners();
+
+    // Tente atualizar o servidor
+    final response = await http.delete('$_baseUrl/${product.id}.json');
+
+    // se houve erro no servidor (percebido da forma abaixo)...
+    if (response.statusCode >= 400) {
+      // devo retornar com a exibição do produto removido da lista
+      _items.insert(index, product);
+      notifyListeners();
+    }
 
     // outra forma de fazer mais direta
     // _items.removeWhere((element) => element.id == productId);
-
-    // notifica modificação
-    notifyListeners();
   }
-
-  // método compartilhando globalmente a informação de favoritos
-
-  // List<Product> get items {
-  //   if (_showFavoriteOnly) {
-  //     // retorna a lista (já duplicada) só com produtos favoritos
-  //     return _items.where((prod) => prod.isFavorite).toList();
-  //   }
-  //   return [..._items];
-  // }
-
-  // // métodos para alterar o status de favorito do produto
-  // void showFavoriteOnly() {
-  //   _showFavoriteOnly = true;
-  //   notifyListeners();
-  // }
-
-  // void showAll() {
-  //   _showFavoriteOnly = false;
-  //   notifyListeners();
-  // }
 }
