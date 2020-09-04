@@ -27,7 +27,8 @@ class Products with ChangeNotifier {
     // trabalhando com requisições http
     const url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
 
-    http.post(
+    http
+        .post(
       url,
       body: json.encode({
         'title': newProduct.title,
@@ -36,19 +37,22 @@ class Products with ChangeNotifier {
         'imageUrl': newProduct.imageUrl,
         'isFavorite': newProduct.isFavorite,
       }),
-    );
-
-    // adiciona um novo produto igual ao passado e com a geração do id aqui
-    _items.add(Product(
-      id: Random().nextDouble().toString(),
-      title: newProduct.title,
-      description: newProduct.description,
-      price: newProduct.price,
-      imageUrl: newProduct.imageUrl,
-    ));
-    // houve uma alteração na lista que precisa ser notificada
-    // usando um método da classe mixins ChangeNotifier
-    notifyListeners();
+    )
+        .then((value) {
+      //código executado só depois de cadastrado no servidor web
+      // adiciona um novo produto igual ao passado e com a geração do id aqui
+      _items.add(Product(
+        // a resposta do firebase traz um corpo com a chave criada lá (name)
+        id: json.decode(value.body)['name'],
+        title: newProduct.title,
+        description: newProduct.description,
+        price: newProduct.price,
+        imageUrl: newProduct.imageUrl,
+      ));
+      // houve uma alteração na lista que precisa ser notificada
+      // usando um método da classe mixins ChangeNotifier
+      notifyListeners();
+    });
   }
 
   bool updateProduct(Product product) {
