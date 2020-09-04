@@ -118,7 +118,24 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
     // se não houver um id, devo chamar addProduct
     if (_formData['id'] == null) {
-      products.addProduct(product).then((_) {
+      products.addProduct(product).catchError((error) {
+        // tratando o erro aqui através de uma mensagem para o usuário
+        // aqui é preciso ter <Null> para coincidor com o retorno do error
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Ocorreu um erro!'),
+            content: Text('Ocorreu um erro ao salvar o produto!'),
+            actions: [
+              FlatButton(
+                // só fecha a tela do alerta
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Ok'),
+              ),
+            ],
+          ),
+        );
+      }).then((_) {
         // indicando que o processamento terminou
         setState(() {
           _isLoading = false;

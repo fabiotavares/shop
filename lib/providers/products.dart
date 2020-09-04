@@ -25,7 +25,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product newProduct) {
     // trabalhando com requisições http
-    const url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
+    const url = 'https://flutter-cod3r-6b033.firebaseio.com/products';
 
     // vou retornar um Future da forma abaixo, para fechar o formulário apenas
     // quando a requisição tiver sido completada no servidor
@@ -39,7 +39,8 @@ class Products with ChangeNotifier {
         'imageUrl': newProduct.imageUrl,
         'isFavorite': newProduct.isFavorite,
       }),
-    ).then((response) {
+    )
+        .then((response) {
       //código executado só depois de cadastrado no servidor web
       // adiciona um novo produto igual ao passado e com a geração do id aqui
       _items.add(Product(
@@ -53,7 +54,14 @@ class Products with ChangeNotifier {
       // houve uma alteração na lista que precisa ser notificada
       // usando um método da classe mixins ChangeNotifier
       notifyListeners();
-    });
+    })/* .catchError((error) {
+      //capturando erro no servidor
+      print(error);
+      // passando o erro pra ser tratado na sequência
+      throw (error);
+      // IMPORTANTE: se eu não tratar o erro aqui, ele poderá ser captura pra
+      // frente. Mas se tratar aqui e quiser tratar na frente, preciso relançar
+    }) */;
   }
 
   bool updateProduct(Product product) {
