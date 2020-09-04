@@ -56,6 +56,25 @@ class Products with ChangeNotifier {
     return true;
   }
 
+  void removeItem(String productId) {
+    // tenta localizar o produto na lista de produtos
+    final index = _items.indexWhere((element) => element.id == productId);
+
+    // se o index == -1 significa que não encontrou o produto
+    if (index == -1) {
+      return;
+    }
+
+    // remove o produto da lista
+    _items.removeAt(index);
+
+    // outra forma de fazer mais direta
+    // _items.removeWhere((element) => element.id == productId);
+
+    // notifica modificação
+    notifyListeners();
+  }
+
   // método compartilhando globalmente a informação de favoritos
 
   // List<Product> get items {

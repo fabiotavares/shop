@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/providers/product.dart';
+import 'package:shop/providers/products.dart';
 import 'package:shop/utils/app_routes.dart';
 
 class ProductItem extends StatelessWidget {
@@ -34,7 +36,34 @@ class ProductItem extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.delete),
               color: Theme.of(context).errorColor,
-              onPressed: () {},
+              onPressed: () {
+                // confirma se deve excluir o cadastro do produto
+                showDialog(
+                  // retorna um Future
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text('Tem certeza?'),
+                    content: Text('Quer remover o produto?'),
+                    actions: [
+                      FlatButton(
+                        child: Text('Não'),
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                      ),
+                      FlatButton(
+                        child: Text('Sim'),
+                        onPressed: () => Navigator.of(ctx).pop(true),
+                      ),
+                    ],
+                  ),
+                ).then((confirmou) {
+                  if (confirmou) {
+                    // remover um produto do cadastro
+                    // listen = false pois estou chamando fora do build dele
+                    Provider.of<Products>(context, listen: false)
+                        .removeItem(product.id);
+                  }
+                });
+              },
             ),
           ],
         ),
