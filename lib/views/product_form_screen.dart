@@ -1,7 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/providers/product.dart';
+import 'package:shop/providers/products.dart';
 
 class ProductFormScreen extends StatefulWidget {
   @override
@@ -64,21 +64,25 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     }
 
     // método save: chama o onSave de cada campo do formulário
+    // vai inserir todos os valores digitados dentro de um map
     _form.currentState.save();
 
     // neste ponto eu tenho o map _formData com todos os dados digitados
-    // criando o objeto...
+    // criando o objeto a partir do map criando antes
     final newProduct = Product(
-      id: Random().nextDouble().toString(),
       title: _formData['title'],
       price: _formData['price'],
       description: _formData['description'],
       imageUrl: _formData['imageUrl'],
     );
 
-    print(newProduct.id);
-    print(newProduct.title);
-    print(newProduct.price);
+    // acessando o provider de produtos para adicionar o novo produto
+    // IMPORTANTE: preciso passar listen: false pra funcionar
+    // isso pois estou fora do build (fora da árvore de widgets)
+    // RESUMINDO: posso usar o Provider fora do build, DESDE que não use listen
+    Provider.of<Products>(context, listen: false).addProduct(newProduct);
+    // fechando a tela de formulário
+    Navigator.of(context).pop();
   }
 
   @override

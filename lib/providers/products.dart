@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/providers/product.dart';
@@ -19,8 +21,15 @@ class Products with ChangeNotifier {
     return _items.where((prod) => prod.isFavorite).toList();
   }
 
-  void addProduct(Product product) {
-    _items.add(product);
+  void addProduct(Product newProduct) {
+    // adiciona um novo produto igual ao passado e com a geração do id aqui
+    _items.add(Product(
+      id: Random().nextDouble().toString(),
+      title: newProduct.title,
+      description: newProduct.description,
+      price: newProduct.price,
+      imageUrl: newProduct.imageUrl,
+    ));
     // houve uma alteração na lista que precisa ser notificada
     // usando um método da classe mixins ChangeNotifier
     notifyListeners();
