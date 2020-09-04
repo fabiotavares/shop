@@ -23,11 +23,13 @@ class Products with ChangeNotifier {
     return _items.where((prod) => prod.isFavorite).toList();
   }
 
-  void addProduct(Product newProduct) {
+  Future<void> addProduct(Product newProduct) {
     // trabalhando com requisições http
     const url = 'https://flutter-cod3r-6b033.firebaseio.com/products.json';
 
-    http
+    // vou retornar um Future da forma abaixo, para fechar o formulário apenas
+    // quando a requisição tiver sido completada no servidor
+    return http
         .post(
       url,
       body: json.encode({
@@ -37,13 +39,12 @@ class Products with ChangeNotifier {
         'imageUrl': newProduct.imageUrl,
         'isFavorite': newProduct.isFavorite,
       }),
-    )
-        .then((value) {
+    ).then((response) {
       //código executado só depois de cadastrado no servidor web
       // adiciona um novo produto igual ao passado e com a geração do id aqui
       _items.add(Product(
         // a resposta do firebase traz um corpo com a chave criada lá (name)
-        id: json.decode(value.body)['name'],
+        id: json.decode(response.body)['name'],
         title: newProduct.title,
         description: newProduct.description,
         price: newProduct.price,
