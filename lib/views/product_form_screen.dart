@@ -33,7 +33,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     final product = ModalRoute.of(context).settings.arguments as Product;
 
     // se houver um produto para edição, deve-se atualizar o map com seus dados
-    if (product != null) {
+    // apenas na primeira vez, ou seja, quando _formData for vazio
+    if (_formData.isEmpty && product != null) {
       _formData['id'] = product.id;
       _formData['title'] = product.title;
       _formData['description'] = product.description;
