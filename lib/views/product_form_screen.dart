@@ -45,6 +45,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         _imageUrlController.text = _formData['imageUrl'];
       } else {
         // garantir que não aparece null em valor quando for cadastrar novo produto
+        _formData['price'] = '';
       }
     }
   }
@@ -164,7 +165,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 onSaved: (value) => _formData['title'] = value,
               ),
               TextFormField(
-                initialValue: _formData['price'],
+                initialValue: _formData['price'].toString(),
                 decoration: InputDecoration(labelText: 'Preço'),
                 textInputAction: TextInputAction.next,
                 focusNode: _priceFocusNode,
