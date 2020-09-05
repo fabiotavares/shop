@@ -87,13 +87,14 @@ class _OrderButtonState extends State<OrderButton> {
       onPressed: widget.cart.totalAmount == 0
           ? null
           : () async {
+            // anima antes
               setState(() {
                 _isLoading = true;
               });
               // chamar o provider de ordens para adicionar na lista
               await Provider.of<Orders>(context, listen: false)
                   .addOrder(widget.cart);
-
+              // encerra animação depois
               setState(() {
                 _isLoading = false;
               });
