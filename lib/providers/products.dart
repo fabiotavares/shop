@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop/exceptions/http_exception.dart';
@@ -7,31 +6,42 @@ import 'package:shop/providers/product.dart';
 import 'package:shop/utils/constants.dart';
 
 class Products with ChangeNotifier {
+  //---------------
   final _baseUrl = '${Constants.BASE_API_URL}/products';
   List<Product> _items = [];
-  // bool _showFavoriteOnly = false;
+
+  //---------------
 
   // esse get retorna uma cópia da lista (através do operador
   // spread), para evitar acesso direto ao seu conteúdo
   List<Product> get items => [..._items];
 
+  //---------------
+
   int get itemsCount {
     return _items.length;
   }
+
+  //---------------
 
   // lista de favoritos somente
   List<Product> get favoriteItems {
     return _items.where((prod) => prod.isFavorite).toList();
   }
 
+  //---------------
+
   // obtendo a lista de produtos do servidor
   Future<void> loadProducts() async {
     final response = await http.get('$_baseUrl.json');
+
     // decodificando a resposta para obter a lista de produtos
     Map<String, dynamic> data = json.decode(response.body);
+
     if (data != null) {
       // limpar lista
       _items.clear();
+
       // pegar dados atualizados
       data.forEach((productId, productData) {
         _items.add(Product(
@@ -50,6 +60,8 @@ class Products with ChangeNotifier {
     return Future.value();
   }
 
+  //---------------
+
   Future<void> addProduct(Product newProduct) async {
     // trabalhando com requisições http
     // vou retornar um Future da forma abaixo, para fechar o formulário apenas
@@ -65,7 +77,7 @@ class Products with ChangeNotifier {
         'imageUrl': newProduct.imageUrl,
         'isFavorite': newProduct.isFavorite,
       }),
-    );
+    ); 
     //código executado só depois de cadastrado no servidor web
     // adiciona um novo produto igual ao passado e com a geração do id aqui
     _items.add(Product(
@@ -80,6 +92,8 @@ class Products with ChangeNotifier {
     // usando um método da classe mixins ChangeNotifier
     notifyListeners();
   }
+
+  //---------------
 
   Future<bool> updateProduct(Product product) async {
     // o produto e seu id precisam ser diferentes de nulos para prosseguir
@@ -106,11 +120,15 @@ class Products with ChangeNotifier {
         'isFavorite': product.isFavorite,
       }),
     );
+
+    // atualiza a lista local apenas no item modificado
     _items[index] = product;
     notifyListeners();
 
     return Future.value(true);
   }
+
+  //---------------
 
   Future<void> removeItem(String productId) async {
     // tenta localizar o produto na lista de produtos

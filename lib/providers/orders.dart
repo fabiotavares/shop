@@ -19,16 +19,21 @@ class Order {
 }
 
 class Orders with ChangeNotifier {
+  //--------------------
   final _baseUrl = '${Constants.BASE_API_URL}/orders';
   List<Order> _items = [];
-
+  //--------------------
   Future<void> loadOrders() async {
+    // usar uma lista auxiliar para inverter depois para definitiva
     List<Order> loadItems = [];
 
     // decodificando a resposta para obter a lista de produtos
     final response = await http.get('$_baseUrl.json');
+
+    // obtendo um map com todos os pedidos do servidor
     Map<String, dynamic> data = json.decode(response.body);
 
+    //adicionando cada pedido na lista
     if (data != null) {
       // pegar dados atualizados
       data.forEach((orderId, orderData) {
@@ -49,26 +54,32 @@ class Orders with ChangeNotifier {
           ),
         );
       });
-      // atualizar exibição dos dados
-      notifyListeners();
     }
 
     // obtém a lista invertida (mais recente vem antes)
     _items = loadItems.reversed.toList();
+
+    // atualizar exibição dos dados
+    notifyListeners();
+
     return Future.value();
   }
 
+  //--------------------
   List<Order> get items {
     // retorne uma cópia da lista de itemCart
     return [..._items];
   }
 
+  //--------------------
   int get itemsCount {
     return _items.length;
   }
 
+  //--------------------
   Future<void> addOrder(Cart cart) async {
     final date = DateTime.now();
+
     final response = await http.post(
       '$_baseUrl.json',
       body: json.encode({

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/exceptions/http_exception.dart';
 import 'package:shop/providers/cart.dart';
-
 import 'package:shop/providers/product.dart';
 import 'package:shop/utils/app_routes.dart';
 
 class ProductGridItem extends StatelessWidget {
+  final void Function() updateGridIsShowFavoriteOnly;
+
+  const ProductGridItem(this.updateGridIsShowFavoriteOnly);
+
   @override
   Widget build(BuildContext context) {
     // necessário pra funcionar com o último elemento da lista (não entendi)
@@ -45,6 +48,8 @@ class ProductGridItem extends StatelessWidget {
               onPressed: () async {
                 try {
                   await product.toggleFavorite();
+                  // atualiza grid de produtos se necessário
+                  updateGridIsShowFavoriteOnly();
                 } on HttpException catch (e) {
                   //exibir mensagem de erro com snackbar
                   scaffold.showSnackBar(

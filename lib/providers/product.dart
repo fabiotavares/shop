@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop/exceptions/http_exception.dart';
@@ -22,17 +21,21 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
+  //---------------
+
   void _toggleFavorite() {
     isFavorite = !isFavorite;
     notifyListeners();
   }
 
+  //---------------
+
   Future<void> toggleFavorite() async {
     // extratégio otimista: muda localmente antes e mostra para o usuário
     _toggleFavorite();
 
+    // tenta atualizar no servidor
     try {
-      // tenta atualizar no servidor
       final url = '${Constants.BASE_API_URL}/products/$id.json';
       final response = await http.patch(
         url,

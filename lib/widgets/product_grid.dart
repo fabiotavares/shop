@@ -5,7 +5,8 @@ import 'package:shop/widgets/product_grid_item.dart';
 
 class ProductGrid extends StatelessWidget {
   final bool showFavoritesOnly;
-  const ProductGrid(this.showFavoritesOnly);
+  final void Function () updateGridIsShowFavoriteOnly;
+  const ProductGrid(this.showFavoritesOnly, this.updateGridIsShowFavoriteOnly);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class ProductGrid extends StatelessWidget {
       // forma de cadastrar um provider a partir de um elemento já existente
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
         value: products[i],
-        child: ProductGridItem(),
+        child: ProductGridItem(updateGridIsShowFavoriteOnly),
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         // este componente já tem scroll

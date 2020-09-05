@@ -26,6 +26,9 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   @override
   void initState() {
     super.initState();
+
+    // uma forma de fazer => exige StatefulWidget
+    // em order_screen foi usada uma outra técnica com FutureBuilder (melhor)
     Provider.of<Products>(context, listen: false).loadProducts().then((value) {
       setState(() {
         _isLoading = false;
@@ -35,10 +38,6 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // obtendo acesso ao provider products para saber se deve exibir
-    // só os favoritos ou não
-    //final Products products = Provider.of(context); // forma global de fazer
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Minha Loja'),
@@ -64,13 +63,6 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                   _showFavoritesOnly = false;
                 }
               });
-
-              // forma global de fazer...
-              // if (value == FilterOption.Favorite) {
-              //   products.showFavoriteOnly();
-              // } else {
-              //   products.showAll();
-              // }
             },
           ),
           Consumer<Cart>(
@@ -89,11 +81,16 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ProductGrid(_showFavoritesOnly),
+          ? Center(child: CircularProgressIndicator())
+          : ProductGrid(_showFavoritesOnly, updateGridIsShowFavoriteOnly),
       drawer: AppDrawer(),
     );
+  }
+
+  void updateGridIsShowFavoriteOnly() {
+    // atualiza caso esteja mostrando apenas favoritos
+    if (_showFavoritesOnly) {
+      setState(() {});
+    }
   }
 }

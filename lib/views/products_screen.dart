@@ -6,14 +6,11 @@ import 'package:shop/widgets/app_drawer.dart';
 import 'package:shop/widgets/product_item.dart';
 
 class ProductsScreen extends StatelessWidget {
-  Future<void> _refreshProducts(BuildContext context) {
-    // importante colocar listen: false
-    return Provider.of<Products>(context, listen: false).loadProducts();
-  }
-
   @override
   Widget build(BuildContext context) {
+    //--------------------------
     final products = Provider.of<Products>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Gerenciar Produtos'),
@@ -43,5 +40,10 @@ class ProductsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _refreshProducts(BuildContext context) {
+    // importante colocar listen: false
+    return Provider.of<Products>(context, listen: false).loadProducts();
   }
 }
