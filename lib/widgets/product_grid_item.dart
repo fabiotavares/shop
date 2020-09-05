@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/exceptions/http_exception.dart';
 import 'package:shop/providers/cart.dart';
 
 import 'package:shop/providers/product.dart';
@@ -8,6 +9,8 @@ import 'package:shop/utils/app_routes.dart';
 class ProductGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // necessário pra funcionar com o último elemento da lista (não entendi)
+    final scaffold = Scaffold.of(context);
     // obtendo o produto através do provider e não mais como parâmetro
     final Product product = Provider.of<Product>(context, listen: false);
     final Cart cart = Provider.of<Cart>(context, listen: false);
@@ -39,7 +42,19 @@ class ProductGridItem extends StatelessWidget {
               icon: Icon(
                   product.isFavorite ? Icons.favorite : Icons.favorite_border),
               color: Theme.of(context).accentColor,
-              onPressed: () => product.toggleFavorite(),
+              onPressed: () async {
+                try {
+                  await product.toggleFavorite();
+                } on HttpException catch (e) {
+                  //exibir mensagem de erro com snackbar
+                  scaffold.showSnackBar(
+                    SnackBar(
+                      content: Text(e.toString()),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
             ),
           ),
           title: Text(
@@ -53,9 +68,8 @@ class ProductGridItem extends StatelessWidget {
               // isso vai retornar o scaffold existente na hierarquia de context
               // e vai encontrar o objeto em ProductOverviewScreen
               //Scaffold.of(context).openDrawer();
-              Scaffold.of(context)
-                  .hideCurrentSnackBar(); // fecha a anterior logo
-              Scaffold.of(context).showSnackBar(
+              scaffold.hideCurrentSnackBar(); // fecha a anterior logo
+              scaffold.showSnackBar(
                 SnackBar(
                   content: Text('Produto adicionado com sucesso!'),
                   duration: Duration(seconds: 3),

@@ -102,6 +102,7 @@ class Products with ChangeNotifier {
         'price': product.price,
         'description': product.description,
         'imageUrl': product.imageUrl,
+        'isFavorite': product.isFavorite,
       }),
     );
     _items[index] = product;
@@ -135,7 +136,7 @@ class Products with ChangeNotifier {
       _items.insert(index, product);
       notifyListeners();
       // lançar excessão para ser tratado onde chamou
-      throw HttpException('Ocorreu um erro na exclusão do produto');
+      throw HttpException('Ocorreu um erro na exclusão do produto!');
     }
 
     // outra forma de fazer mais direta
