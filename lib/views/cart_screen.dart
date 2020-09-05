@@ -42,17 +42,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   // forma de ocupar o espaço entre o chip e o botão!!
                   Spacer(),
-                  FlatButton(
-                    onPressed: () {
-                      // chamar o provider de ordens para adicionar na lista
-                      Provider.of<Orders>(context, listen: false)
-                          .addOrder(cart);
-                      // limpando o carrinho
-                      cart.clear();
-                    },
-                    child: Text('COMPRAR'),
-                    textColor: Theme.of(context).primaryColor,
-                  ),
+                  OrderButton(cart: cart),
                 ],
               ),
             ),
@@ -68,6 +58,49 @@ class CartScreen extends StatelessWidget {
           )),
         ],
       ),
+    );
+  }
+}
+
+// extraí esse widget para transformá-lo em uma classe com estado e, assim,
+// conseguir controlar um spiner dentro dele, que irá indicar o processamento
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      child: _isLoading ? CircularProgressIndicator() : Text('COMPRAR'),
+      textColor: Theme.of(context).primaryColor,
+      onPressed: widget.cart.totalAmount == 0
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              // chamar o provider de ordens para adicionar na lista
+              await Provider.of<Orders>(context, listen: false)
+                  .addOrder(widget.cart);
+
+              setState(() {
+                _isLoading = false;
+              });
+
+              // limpando o carrinho
+              widget.cart.clear();
+            },
     );
   }
 }
