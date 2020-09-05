@@ -28,8 +28,8 @@ class OrdersScreen extends StatelessWidget {
               //
             } else {
               // finalizou o processamento
+              // necessário usar o Consumer para obter o valor esperado
               return Consumer<Orders>(
-                // necessário usar o Consumer para obter o valor esperado
                 builder: (context, orders, child) {
                   return ListView.builder(
                     itemCount: orders.itemsCount,
