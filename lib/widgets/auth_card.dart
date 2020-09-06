@@ -44,10 +44,16 @@ class _AuthCardState extends State<AuthCard> {
 
     if (_authMode == AuthMode.Login) {
       // lógica para o login
+      await auth.login(
+        _authData['email'],
+        _authData['password'],
+      );
     } else {
       // lógica para o registro
-      await auth.signup(_authData['email'], _authData['password']);
-      
+      await auth.signup(
+        _authData['email'],
+        _authData['password'],
+      );
     }
 
     // atualizando tela
