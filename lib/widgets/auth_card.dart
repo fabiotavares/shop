@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/providers/auth.dart';
 
 // modos de exibição da tela
 enum AuthMode { Signup, Login }
@@ -23,7 +25,7 @@ class _AuthCardState extends State<AuthCard> {
     'password': '',
   };
 
-  void _submit() {
+  Future<void> _submit() async {
     // se não conseguiu validar, encerra processamento
     if (!_form.currentState.validate()) {
       return;
@@ -38,10 +40,14 @@ class _AuthCardState extends State<AuthCard> {
     _form.currentState.save();
 
     // aqui já tenho o _authData preenchido e posso processar
+    Auth auth = Provider.of<Auth>(context, listen: false);
+
     if (_authMode == AuthMode.Login) {
       // lógica para o login
     } else {
       // lógica para o registro
+      await auth.signup(_authData['email'], _authData['password']);
+      
     }
 
     // atualizando tela
