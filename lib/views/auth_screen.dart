@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:shop/widgets/auth_card.dart';
 
 class AuthScreen extends StatelessWidget {
   @override
@@ -31,6 +32,7 @@ class AuthScreen extends StatelessWidget {
                 children: [
                   // onde vai aparecer o texto como o nome da aplicação
                   Container(
+                    margin: EdgeInsets.only(bottom: 20.0),
                     padding: EdgeInsets.symmetric(
                       vertical: 8,
                       horizontal: 70,
@@ -60,7 +62,8 @@ class AuthScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  //
+                  // Exibindo o card com os dados de autenticação
+                  AuthCard(),
                 ],
               ),
             ),
