@@ -9,6 +9,10 @@ class AuthCard extends StatefulWidget {
 }
 
 class _AuthCardState extends State<AuthCard> {
+  // atributo para ter acesso ao formulário
+  GlobalKey<FormState> _form = GlobalKey();
+  // atributo usado p/ controlar a exibição dos botões em caso de processamento
+  bool _isLoading = false;
   // atributo para indicar o modo de autenticação atual
   AuthMode _authMode = AuthMode.Login;
   // controller para a senha
@@ -20,7 +24,42 @@ class _AuthCardState extends State<AuthCard> {
   };
 
   void _submit() {
+    // se não conseguiu validar, encerra processamento
+    if (!_form.currentState.validate()) {
+      return;
+    }
 
+    // indica início do processamento
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Chamando onSave dos campos do formulário
+    _form.currentState.save();
+
+    // aqui já tenho o _authData preenchido e posso processar
+    if (_authMode == AuthMode.Login) {
+      // lógica para o login
+    } else {
+      // lógica para o registro
+    }
+
+    // atualizando tela
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _switchMode() {
+    if (_authMode == AuthMode.Login) {
+      setState(() {
+        _authMode = AuthMode.Signup;
+      });
+    } else {
+      setState(() {
+        _authMode = AuthMode.Login;
+      });
+    }
   }
 
   @override
@@ -34,10 +73,11 @@ class _AuthCardState extends State<AuthCard> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Container(
-        height: 320,
+        height: _authMode == AuthMode.Login ? 290 : 371,
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
+          key: _form,
           child: Column(
             children: [
               // campo do email
@@ -85,27 +125,33 @@ class _AuthCardState extends State<AuthCard> {
                           return null;
                         }
                       : null,
-                  onSaved: (value) => _authData['password'] = value,
-                  controller: _passwordController,
                 ),
               // um espaço apenas...
-              SizedBox(
-                height: 20.0,
-              ),
-              // botões de ação
-              RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+              Spacer(),
+              if (_isLoading)
+                CircularProgressIndicator()
+              else
+                // botões de ação
+                RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  color: Theme.of(context).primaryColor,
+                  textColor: Theme.of(context).primaryTextTheme.button.color,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 30.0,
+                    vertical: 8.0,
+                  ),
+                  child: Text(
+                      _authMode == AuthMode.Login ? 'ENTRAR' : 'REGISTRAR'),
+                  onPressed: _submit,
                 ),
-                color: Theme.of(context).primaryColor,
-                textColor: Theme.of(context).primaryTextTheme.button.color,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 30.0,
-                  vertical: 8.0,
+              FlatButton(
+                onPressed: _switchMode,
+                child: Text(
+                  "ALTERNAR P/ ${_authMode == AuthMode.Login ? 'REGISTRAR' : 'LOGIN'}",
                 ),
-                child:
-                    Text(_authMode == AuthMode.Login ? 'ENTRAR' : 'REGISTRAR'),
-                onPressed: _submit,
+                textColor: Theme.of(context).primaryColor,
               ),
             ],
           ),

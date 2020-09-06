@@ -40,7 +40,8 @@ class AuthScreen extends StatelessWidget {
                     // o segundo ponto faz com que o retorno seja da expressão
                     // anterior, que é o pedido neste caso (doideira)
                     // cascade operator
-                    transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
+                    transform: Matrix4.rotationZ(-8 * pi / 180)
+                      ..translate(-10.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.deepOrange.shade900,
