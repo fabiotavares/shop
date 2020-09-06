@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -20,12 +22,45 @@ class AuthScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // container com o título da tela de login
+            // container com o título da tela de login e área de autenticação
             Container(
               width: double.infinity,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-
+                  // onde vai aparecer o texto como o nome da aplicação
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 70,
+                    ),
+                    // o segundo ponto faz com que o retorno seja da expressão
+                    // anterior, que é o pedido neste caso (doideira)
+                    // cascade operator
+                    transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.deepOrange.shade900,
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 8,
+                          color: Colors.black26,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'Minha Loja',
+                      style: TextStyle(
+                        color:
+                            Theme.of(context).accentTextTheme.headline6.color,
+                        fontSize: 45,
+                        fontFamily: 'Anton',
+                      ),
+                    ),
+                  ),
+                  //
                 ],
               ),
             ),
