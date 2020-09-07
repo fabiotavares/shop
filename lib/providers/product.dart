@@ -11,6 +11,7 @@ class Product with ChangeNotifier {
   final double price;
   final String imageUrl;
   bool isFavorite = false;
+  String _token;
 
   Product({
     this.id,
@@ -30,13 +31,13 @@ class Product with ChangeNotifier {
 
   //---------------
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String token) async {
     // extratégio otimista: muda localmente antes e mostra para o usuário
     _toggleFavorite();
 
     // tenta atualizar no servidor
     try {
-      final url = '${Constants.BASE_API_URL}/products/$id.json';
+      final url = '${Constants.BASE_API_URL}/products/$id.json?auth=$token';
       final response = await http.patch(
         url,
         body: json.encode({

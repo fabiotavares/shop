@@ -72,7 +72,7 @@ class Products with ChangeNotifier {
     final response = await http.post(
       // await faz aguardar a execução do bloco
       // response tem a chave da inserção do produto
-      '$_baseUrl.json',
+      '$_baseUrl.json?auth=$_token',
       body: json.encode({
         'title': newProduct.title,
         'price': newProduct.price,
@@ -114,7 +114,7 @@ class Products with ChangeNotifier {
 
     // caso contrário, posso executar a atualização
     await http.patch(
-      '$_baseUrl/${product.id}.json',
+      '$_baseUrl/${product.id}.json?auth=$_token',
       body: json.encode({
         'title': product.title,
         'price': product.price,
@@ -150,7 +150,8 @@ class Products with ChangeNotifier {
     notifyListeners();
 
     // Tente atualizar o servidor
-    final response = await http.delete('$_baseUrl/${product.id}.json');
+    final response =
+        await http.delete('$_baseUrl/${product.id}.json?auth=$_token');
 
     // se houve erro no servidor (percebido da forma abaixo)...
     if (response.statusCode >= 400) {

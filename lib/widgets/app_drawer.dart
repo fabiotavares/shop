@@ -25,7 +25,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Loja'),
             onTap: () =>
                 // abre home substituindo esta tela, pra evitar o empilhamento
-                Navigator.pushReplacementNamed(context, AppRoutes.HOME),
+                Navigator.pushReplacementNamed(context, AppRoutes.AUTH_HOME),
           ),
           Divider(),
           ListTile(

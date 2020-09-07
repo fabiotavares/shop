@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/exceptions/http_exception.dart';
+import 'package:shop/providers/auth.dart';
 import 'package:shop/providers/cart.dart';
 import 'package:shop/providers/product.dart';
 import 'package:shop/utils/app_routes.dart';
@@ -17,6 +18,7 @@ class ProductGridItem extends StatelessWidget {
     // obtendo o produto através do provider e não mais como parâmetro
     final Product product = Provider.of<Product>(context, listen: false);
     final Cart cart = Provider.of<Cart>(context, listen: false);
+    final Auth auth = Provider.of<Auth>(context, listen: false);
 
     return ClipRRect(
       // para ter as bordas arredondadas
@@ -47,7 +49,7 @@ class ProductGridItem extends StatelessWidget {
               color: Theme.of(context).accentColor,
               onPressed: () async {
                 try {
-                  await product.toggleFavorite();
+                  await product.toggleFavorite(auth.token);
                   // atualiza grid de produtos se necessário
                   updateGridIsShowFavoriteOnly();
                 } on HttpException catch (e) {
