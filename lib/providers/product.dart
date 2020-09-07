@@ -31,18 +31,17 @@ class Product with ChangeNotifier {
 
   //---------------
 
-  Future<void> toggleFavorite(String token) async {
+  Future<void> toggleFavorite(String token, String userId) async {
     // extratégio otimista: muda localmente antes e mostra para o usuário
     _toggleFavorite();
 
     // tenta atualizar no servidor
     try {
-      final url = '${Constants.BASE_API_URL}/products/$id.json?auth=$token';
-      final response = await http.patch(
+      final url =
+          '${Constants.BASE_API_URL}/userFavorites/$userId/$id.json?auth=$token';
+      final response = await http.put(
         url,
-        body: json.encode({
-          'isFavorite': isFavorite,
-        }),
+        body: json.encode(isFavorite),
       );
 
       // verifica se houve erro

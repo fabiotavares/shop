@@ -78,7 +78,6 @@ class Products with ChangeNotifier {
         'price': newProduct.price,
         'description': newProduct.description,
         'imageUrl': newProduct.imageUrl,
-        'isFavorite': newProduct.isFavorite,
       }),
     );
     //código executado só depois de cadastrado no servidor web

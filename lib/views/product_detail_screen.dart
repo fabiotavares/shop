@@ -17,10 +17,7 @@ class ProductDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: GestureDetector(
-          child: Text(product.title),
-          onTap: () => product.toggleFavorite(auth.token),
-        ),
+        title: Text(product.title),
       ),
       body: SingleChildScrollView(
         // uso quando a tela vai ocupar mais do que é visível

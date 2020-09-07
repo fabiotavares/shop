@@ -6,11 +6,17 @@ import 'package:shop/exceptions/auth_exception.dart';
 class Auth with ChangeNotifier {
   // controle do token
   String _token;
+  String _userId;
   DateTime _expiryDate;
 
   // indica se está autenticado
   bool get isAuth {
     return token != null;
+  }
+
+  // identificação do usuário autenticado (para os favoritos e pedidos)
+  String get userId {
+    return isAuth ? _userId : null;
   }
 
   // indica se há um token válido
@@ -52,6 +58,7 @@ class Auth with ChangeNotifier {
       throw AuthException(responseBody['error']['message']);
     } else {
       _token = responseBody['idToken'];
+      _userId = responseBody['localId'];
       // obtendo a data de expiração
       _expiryDate = DateTime.now().add(Duration(
         seconds: int.parse(responseBody['expiresIn']),

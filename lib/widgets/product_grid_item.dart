@@ -49,7 +49,7 @@ class ProductGridItem extends StatelessWidget {
               color: Theme.of(context).accentColor,
               onPressed: () async {
                 try {
-                  await product.toggleFavorite(auth.token);
+                  await product.toggleFavorite(auth.token, auth.userId);
                   // atualiza grid de produtos se necessário
                   updateGridIsShowFavoriteOnly();
                 } on HttpException catch (e) {
