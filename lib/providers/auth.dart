@@ -79,4 +79,12 @@ class Auth with ChangeNotifier {
     // fazer login
     return _authenticate(email, password, "signInWithPassword");
   }
+
+  void logout() {
+    // fazer logout
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    notifyListeners();
+  }
 }
