@@ -7,68 +7,75 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Stack(
-          children: [
-            // container com fundo colorido
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromRGBO(215, 117, 255, 0.5),
-                    Color.fromRGBO(255, 188, 117, 0.9),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            ),
-            // container com o título da tela de login e área de autenticação
-            Container(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // onde vai aparecer o texto como o nome da aplicação
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20.0),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 70,
-                    ),
-                    // o segundo ponto faz com que o retorno seja da expressão
-                    // anterior, que é o pedido neste caso (doideira)
-                    // cascade operator
-                    transform: Matrix4.rotationZ(-8 * pi / 180)
-                      ..translate(-10.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.deepOrange.shade900,
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 8,
-                          color: Colors.black26,
-                          offset: Offset(0, 2),
-                        ),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Center(
+            child: Stack(
+              children: [
+                // container com fundo colorido
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromRGBO(215, 117, 255, 0.5),
+                        Color.fromRGBO(255, 188, 117, 0.9),
                       ],
-                    ),
-                    child: Text(
-                      'Minha Loja',
-                      style: TextStyle(
-                        color:
-                            Theme.of(context).accentTextTheme.headline6.color,
-                        fontSize: 45,
-                        fontFamily: 'Anton',
-                      ),
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                   ),
-                  // Exibindo o card com os dados de autenticação
-                  AuthCard(),
-                ],
-              ),
+                ),
+                // container com o título da tela de login e área de autenticação
+                Container(
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // onde vai aparecer o texto como o nome da aplicação
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20.0),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 70,
+                        ),
+                        // o segundo ponto faz com que o retorno seja da expressão
+                        // anterior, que é o pedido neste caso (doideira)
+                        // cascade operator
+                        transform: Matrix4.rotationZ(-8 * pi / 180)
+                          ..translate(-10.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.deepOrange.shade900,
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 8,
+                              color: Colors.black26,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'Minha Loja',
+                          style: TextStyle(
+                            color: Theme.of(context)
+                                .accentTextTheme
+                                .headline6
+                                .color,
+                            fontSize: 45,
+                            fontFamily: 'Anton',
+                          ),
+                        ),
+                      ),
+                      // Exibindo o card com os dados de autenticação
+                      AuthCard(),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

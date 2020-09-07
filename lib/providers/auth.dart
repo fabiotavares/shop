@@ -4,6 +4,28 @@ import 'package:http/http.dart' as http;
 import 'package:shop/exceptions/auth_exception.dart';
 
 class Auth with ChangeNotifier {
+  // controle do token
+  String _token;
+  DateTime _expiryDate;
+
+  // indica se está autenticado
+  bool get isAuth {
+    return token != null;
+  }
+
+  // indica se há um token válido
+  String get token {
+    // se o token existe e ainda não expirou, retorne seu valor
+    if (_token != null &&
+        _expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now())) {
+      return _token;
+    } else {
+      // caso contrário, retorne null para exigir novo login
+      return null;
+    }
+  }
+
   // api do firebase para autenticação. Link:
   // https://firebase.google.com/docs/reference/rest/auth?hl=pt_br
 
@@ -28,7 +50,16 @@ class Auth with ChangeNotifier {
     final responseBody = json.decode(response.body);
     if (responseBody['error'] != null) {
       throw AuthException(responseBody['error']['message']);
+    } else {
+      _token = responseBody['idToken'];
+      // obtendo a data de expiração
+      _expiryDate = DateTime.now().add(Duration(
+        seconds: int.parse(responseBody['expiresIn']),
+      ));
+
+      notifyListeners();
     }
+
     return Future.value();
   }
 
