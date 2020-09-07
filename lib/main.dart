@@ -21,16 +21,25 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => Products(),
+          create: (_) => Auth(),
+        ),
+        // alteração grande na aula 294...
+        // tudo isso pra levar o token para o provider Products
+        // esse token é necessário para toda requisição após a autenticação
+        // outro detalhe é a ordem do registro desses providers
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: (ctx) => Products(null, []),
+          // além do token necessário, posso ter uma lista de produtos anterior
+          update: (ctx, auth, previousProducts) => Products(
+            auth.token,
+            previousProducts.items,
+          ),
         ),
         ChangeNotifierProvider(
           create: (_) => Cart(),
         ),
         ChangeNotifierProvider(
           create: (_) => Orders(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => Auth(),
         ),
       ],
       child: MaterialApp(

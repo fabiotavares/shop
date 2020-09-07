@@ -9,6 +9,9 @@ class Products with ChangeNotifier {
   //---------------
   final _baseUrl = '${Constants.BASE_API_URL}/products';
   List<Product> _items = [];
+  String _token;
+
+  Products(this._token, this._items);
 
   //---------------
 
@@ -33,7 +36,7 @@ class Products with ChangeNotifier {
 
   // obtendo a lista de produtos do servidor
   Future<void> loadProducts() async {
-    final response = await http.get('$_baseUrl.json');
+    final response = await http.get('$_baseUrl.json?auth=$_token');
 
     // decodificando a resposta para obter a lista de produtos
     Map<String, dynamic> data = json.decode(response.body);
@@ -77,7 +80,7 @@ class Products with ChangeNotifier {
         'imageUrl': newProduct.imageUrl,
         'isFavorite': newProduct.isFavorite,
       }),
-    ); 
+    );
     //código executado só depois de cadastrado no servidor web
     // adiciona um novo produto igual ao passado e com a geração do id aqui
     _items.add(Product(
