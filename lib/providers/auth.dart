@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,7 @@ class Auth with ChangeNotifier {
   String _token;
   String _userId;
   DateTime _expiryDate;
+  Timer _logoutTimer;
 
   // indica se está autenticado
   bool get isAuth {
@@ -63,7 +65,8 @@ class Auth with ChangeNotifier {
       _expiryDate = DateTime.now().add(Duration(
         seconds: int.parse(responseBody['expiresIn']),
       ));
-
+      // ativa o timer para auto logout
+      _autoLogout();
       notifyListeners();
     }
 
@@ -85,6 +88,22 @@ class Auth with ChangeNotifier {
     _token = null;
     _userId = null;
     _expiryDate = null;
+    // cancele o timer do logout se existir
+    if (_logoutTimer != null) {
+      _logoutTimer.cancel();
+      _logoutTimer = null;
+    }
     notifyListeners();
+  }
+
+  void _autoLogout() {
+    // logout automático
+    if (_logoutTimer != null) {
+      // se já estiver contanto, o tempo deve ser renovado
+      _logoutTimer.cancel();
+    }
+    // calcular o tempo correto de validade da sessão
+    final timeToLogout = _expiryDate.difference(DateTime.now()).inSeconds;
+    _logoutTimer = Timer(Duration(seconds: timeToLogout), logout);
   }
 }
