@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop/exceptions/auth_exception.dart';
 
 class Auth with ChangeNotifier {
   // api do firebase para autenticação. Link:
@@ -23,8 +24,11 @@ class Auth with ChangeNotifier {
       }),
     );
 
-    print(json.decode(response.body));
-
+    // verificando se houve algum tipo de erro
+    final responseBody = json.decode(response.body);
+    if (responseBody['error'] != null) {
+      throw AuthException(responseBody['error']['message']);
+    }
     return Future.value();
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/exceptions/auth_exception.dart';
 import 'package:shop/providers/auth.dart';
 
 // modos de exibição da tela
@@ -42,24 +43,49 @@ class _AuthCardState extends State<AuthCard> {
     // aqui já tenho o _authData preenchido e posso processar
     Auth auth = Provider.of<Auth>(context, listen: false);
 
-    if (_authMode == AuthMode.Login) {
-      // lógica para o login
-      await auth.login(
-        _authData['email'],
-        _authData['password'],
-      );
-    } else {
-      // lógica para o registro
-      await auth.signup(
-        _authData['email'],
-        _authData['password'],
-      );
+    // tente fazer login ou registrar novo usuário
+    try {
+      if (_authMode == AuthMode.Login) {
+        // lógica para o login
+        await auth.login(
+          _authData['email'],
+          _authData['password'],
+        );
+      } else {
+        // lógica para o registro
+        await auth.signup(
+          _authData['email'],
+          _authData['password'],
+        );
+      }
+    } on AuthException catch (e) {
+      _showErrorDialog(e.toString());
+    } catch (e) {
+      _showErrorDialog('Ocorreu um erro inesperado!');
     }
 
     // atualizando tela
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _showErrorDialog(String msg) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Ocorreu um erro'),
+        content: Text(msg),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Fechar'),
+          )
+        ],
+      ),
+    );
   }
 
   void _switchMode() {
