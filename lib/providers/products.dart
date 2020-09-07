@@ -46,6 +46,7 @@ class Products with ChangeNotifier {
     final favMap =
         favResponse.body != null ? json.decode(favResponse.body) : null;
 
+
     if (data != null) {
       // limpar lista
       _items.clear();
