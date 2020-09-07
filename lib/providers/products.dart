@@ -10,8 +10,9 @@ class Products with ChangeNotifier {
   final _baseUrl = '${Constants.BASE_API_URL}/products';
   List<Product> _items = [];
   String _token;
+  String _userId;
 
-  Products(this._token, this._items);
+  Products([this._token, this._userId, this._items = const []]);
 
   //---------------
 
@@ -36,10 +37,14 @@ class Products with ChangeNotifier {
 
   // obtendo a lista de produtos do servidor
   Future<void> loadProducts() async {
+    // requisição dos produtos no servidor
     final response = await http.get('$_baseUrl.json?auth=$_token');
-
-    // decodificando a resposta para obter a lista de produtos
     Map<String, dynamic> data = json.decode(response.body);
+    // requisição para os favoritos deste usuário
+    final favResponse = await http.get(
+        '${Constants.BASE_API_URL}/userFavorites/$_userId.json?auth=$_token');
+    final favMap =
+        favResponse.body != null ? json.decode(favResponse.body) : null;
 
     if (data != null) {
       // limpar lista
@@ -47,13 +52,16 @@ class Products with ChangeNotifier {
 
       // pegar dados atualizados
       data.forEach((productId, productData) {
+        // descobrindo se é favorito deste usuário
+        // ?? é um teste adicional permitindo um valor padrão (uau)
+        final isFavorite = favMap == null ? false : favMap[productId] ?? false;
         _items.add(Product(
           id: productId,
           title: productData['title'],
           description: productData['description'],
           price: productData['price'],
           imageUrl: productData['imageUrl'],
-          isFavorite: productData['isFavorite'],
+          isFavorite: isFavorite,
         ));
       });
       // atualizar exibição dos dados

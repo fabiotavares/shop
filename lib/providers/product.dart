@@ -11,7 +11,6 @@ class Product with ChangeNotifier {
   final double price;
   final String imageUrl;
   bool isFavorite = false;
-  String _token;
 
   Product({
     this.id,
@@ -39,6 +38,7 @@ class Product with ChangeNotifier {
     try {
       final url =
           '${Constants.BASE_API_URL}/userFavorites/$userId/$id.json?auth=$token';
+      
       final response = await http.put(
         url,
         body: json.encode(isFavorite),

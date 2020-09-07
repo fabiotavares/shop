@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shop/providers/auth.dart';
 
 import 'package:shop/providers/product.dart';
 
@@ -13,7 +11,6 @@ class ProductDetailScreen extends StatelessWidget {
     // foi passado na chamada da rota...
     final Product product =
         ModalRoute.of(context).settings.arguments as Product;
-    final Auth auth = Provider.of<Auth>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(

@@ -28,10 +28,11 @@ class MyApp extends StatelessWidget {
         // esse token é necessário para toda requisição após a autenticação
         // outro detalhe é a ordem do registro desses providers
         ChangeNotifierProxyProvider<Auth, Products>(
-          create: (ctx) => Products(null, []),
+          create: (ctx) => Products(),
           // além do token necessário, posso ter uma lista de produtos anterior
           update: (ctx, auth, previousProducts) => Products(
             auth.token,
+            auth.userId,
             previousProducts.items,
           ),
         ),
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
           create: (_) => Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
-          create: (_) => Orders(null, []),
+          create: (_) => Orders(),
           update: (ctx, auth, previousOrders) => Orders(
             auth.token,
             previousOrders.items,
