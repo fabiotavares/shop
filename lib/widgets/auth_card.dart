@@ -23,29 +23,29 @@ class _AuthCardState extends State<AuthCard>
   final _passwordController = TextEditingController();
 
   // animações
-  AnimationController _controller;
-  Animation<Size> _heighAnimation;
+  // AnimationController _controller;
+  // Animation<Size> _heighAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // inicializado as variáveis para a animação na mudança de tamanho do card
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 300),
-    );
+    // // inicializado as variáveis para a animação na mudança de tamanho do card
+    // _controller = AnimationController(
+    //   vsync: this,
+    //   duration: Duration(milliseconds: 300),
+    // );
 
-    _heighAnimation = Tween(
-      begin: Size(double.infinity, 290),
-      end: Size(double.infinity, 371),
-    ).animate(
-      // tipo de animação
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.linear,
-      ),
-    );
+    // _heighAnimation = Tween(
+    //   begin: Size(double.infinity, 290),
+    //   end: Size(double.infinity, 371),
+    // ).animate(
+    //   // tipo de animação
+    //   CurvedAnimation(
+    //     parent: _controller,
+    //     curve: Curves.linear,
+    //   ),
+    // );
   }
 
   // estrutura para armazenar os dados de login
@@ -120,13 +120,13 @@ class _AuthCardState extends State<AuthCard>
         _authMode = AuthMode.Signup;
       });
       // animação pra frente (crescendo)
-      _controller.forward();
+      // _controller.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
       // animação pra trás (diminiundo)
-      _controller.reverse();
+      // _controller.reverse();
     }
   }
 
@@ -140,19 +140,15 @@ class _AuthCardState extends State<AuthCard>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: AnimatedBuilder(
-        animation: _heighAnimation,
-        // parte que não precisa ser renderizada durante a animação
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.linear,
+        height: _authMode == AuthMode.Login ? 290 : 371,
+        // height: _heighAnimation.value.height,
+        width: deviceSize.width * 0.75,
+        padding: EdgeInsets.all(16.0),
+        // parte passada pelo child acima
         child: cardForm(context),
-        // parte da animação que precisa ser renderizada
-        builder: (context, child) => Container(
-          // height: _authMode == AuthMode.Login ? 290 : 371,
-          height: _heighAnimation.value.height,
-          width: deviceSize.width * 0.75,
-          padding: EdgeInsets.all(16.0),
-          // parte passada pelo child acima
-          child: child,
-        ),
       ),
     );
   }
