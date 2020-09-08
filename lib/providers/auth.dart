@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop/data/store.dart';
 import 'package:shop/exceptions/auth_exception.dart';
 
 class Auth with ChangeNotifier {
@@ -65,6 +66,17 @@ class Auth with ChangeNotifier {
       _expiryDate = DateTime.now().add(Duration(
         seconds: int.parse(responseBody['expiresIn']),
       ));
+
+      // salvar dados do usuário logado
+      Store.saveMap(
+        'userData',
+        {
+          'token': _token,
+          'userId': _userId,
+          'expiryDate': _expiryDate.toIso8601String(),
+        },
+      );
+
       // ativa o timer para auto logout
       _autoLogout();
       notifyListeners();
@@ -73,16 +85,46 @@ class Auth with ChangeNotifier {
     return Future.value();
   }
 
+  //
   Future<void> signup(String email, String password) async {
     // fazer signUp (inscrição)
     return _authenticate(email, password, "signUp");
   }
 
+  //
   Future<void> login(String email, String password) async {
     // fazer login
     return _authenticate(email, password, "signInWithPassword");
   }
 
+  //
+  Future<void> tryAutoLogin() async {
+    // se já estiver logado, não é necessária nenhuma ação
+    if (isAuth) {
+      return Future.value();
+    }
+
+    // tente identificar o usuário
+    final userData = await Store.getMap('userData');
+    if (userData == null) {
+      return Future.value();
+    }
+
+    // verifique se a data é válida
+    final expiryDate = DateTime.parse(userData['expiryDate']);
+    if (expiryDate.isBefore(DateTime.now())) {
+      return Future.value();
+    }
+
+    _userId = userData['userId'];
+    _token = userData['token'];
+    _expiryDate = expiryDate;
+
+    _autoLogout();
+    notifyListeners();
+  }
+
+  //
   void logout() {
     // fazer logout
     _token = null;
@@ -93,6 +135,7 @@ class Auth with ChangeNotifier {
       _logoutTimer.cancel();
       _logoutTimer = null;
     }
+    Store.remove('userData');
     notifyListeners();
   }
 
