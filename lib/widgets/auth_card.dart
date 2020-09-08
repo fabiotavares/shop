@@ -46,19 +46,6 @@ class _AuthCardState extends State<AuthCard>
         curve: Curves.linear,
       ),
     );
-
-    // atualizando a tela quando um evento de animação ocorrer
-    _heighAnimation.addListener(() {
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    // como fiz de forma manual, preciso liberar o recurso aqui
-    _controller.dispose();
   }
 
   // estrutura para armazenar os dados de login
@@ -153,91 +140,101 @@ class _AuthCardState extends State<AuthCard>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Container(
-        // height: _authMode == AuthMode.Login ? 290 : 371,
-        height: _heighAnimation.value.height,
-        width: deviceSize.width * 0.75,
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _form,
-          child: Column(
-            children: [
-              // campo do email
-              TextFormField(
-                decoration: InputDecoration(labelText: 'E-mail'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  // poderia ser externalizado e mais complexo
-                  if (value.isEmpty || !value.contains('@')) {
-                    return 'Informe um e-mail válido!';
-                  }
-                  // se não tem erro retorne null
-                  return null;
-                },
-                onSaved: (value) => _authData['email'] = value,
-              ),
-              // campo da senha
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Senha'),
-                obscureText: true,
-                validator: (value) {
-                  // poderia ser externalizado e mais complexo
-                  if (value.isEmpty || value.length < 5) {
-                    return 'Informe uma senha válida!';
-                  }
-                  // se não tem erro retorne null
-                  return null;
-                },
-                onSaved: (value) => _authData['password'] = value,
-                controller: _passwordController,
-              ),
-              // segundo campo de confrimação de senha (exibição condicionada)
-              if (_authMode == AuthMode.Signup)
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Confirmar Senha'),
-                  obscureText: true,
-                  // só valide se estiver em signup (não sei porque precisa)
-                  validator: _authMode == AuthMode.Signup
-                      ? (value) {
-                          // deve ser igual à senha digitada anteriormente
-                          if (value != _passwordController.text) {
-                            return 'Senhas são diferentes!';
-                          }
-                          // se não tem erro retorne null
-                          return null;
-                        }
-                      : null,
-                ),
-              // um espaço apenas...
-              Spacer(),
-              if (_isLoading)
-                CircularProgressIndicator()
-              else
-                // botões de ação
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  color: Theme.of(context).primaryColor,
-                  textColor: Theme.of(context).primaryTextTheme.button.color,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 30.0,
-                    vertical: 8.0,
-                  ),
-                  child: Text(
-                      _authMode == AuthMode.Login ? 'ENTRAR' : 'REGISTRAR'),
-                  onPressed: _submit,
-                ),
-              FlatButton(
-                onPressed: _switchMode,
-                child: Text(
-                  "ALTERNAR P/ ${_authMode == AuthMode.Login ? 'REGISTRAR' : 'LOGIN'}",
-                ),
-                textColor: Theme.of(context).primaryColor,
-              ),
-            ],
-          ),
+      child: AnimatedBuilder(
+        animation: _heighAnimation,
+        // parte que não precisa ser renderizada durante a animação
+        child: cardForm(context),
+        // parte da animação que precisa ser renderizada
+        builder: (context, child) => Container(
+          // height: _authMode == AuthMode.Login ? 290 : 371,
+          height: _heighAnimation.value.height,
+          width: deviceSize.width * 0.75,
+          padding: EdgeInsets.all(16.0),
+          // parte passada pelo child acima
+          child: child,
         ),
+      ),
+    );
+  }
+
+  Form cardForm(BuildContext context) {
+    return Form(
+      key: _form,
+      child: Column(
+        children: [
+          // campo do email
+          TextFormField(
+            decoration: InputDecoration(labelText: 'E-mail'),
+            keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              // poderia ser externalizado e mais complexo
+              if (value.isEmpty || !value.contains('@')) {
+                return 'Informe um e-mail válido!';
+              }
+              // se não tem erro retorne null
+              return null;
+            },
+            onSaved: (value) => _authData['email'] = value,
+          ),
+          // campo da senha
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Senha'),
+            obscureText: true,
+            validator: (value) {
+              // poderia ser externalizado e mais complexo
+              if (value.isEmpty || value.length < 5) {
+                return 'Informe uma senha válida!';
+              }
+              // se não tem erro retorne null
+              return null;
+            },
+            onSaved: (value) => _authData['password'] = value,
+            controller: _passwordController,
+          ),
+          // segundo campo de confrimação de senha (exibição condicionada)
+          if (_authMode == AuthMode.Signup)
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Confirmar Senha'),
+              obscureText: true,
+              // só valide se estiver em signup (não sei porque precisa)
+              validator: _authMode == AuthMode.Signup
+                  ? (value) {
+                      // deve ser igual à senha digitada anteriormente
+                      if (value != _passwordController.text) {
+                        return 'Senhas são diferentes!';
+                      }
+                      // se não tem erro retorne null
+                      return null;
+                    }
+                  : null,
+            ),
+          // um espaço apenas...
+          Spacer(),
+          if (_isLoading)
+            CircularProgressIndicator()
+          else
+            // botões de ação
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              color: Theme.of(context).primaryColor,
+              textColor: Theme.of(context).primaryTextTheme.button.color,
+              padding: EdgeInsets.symmetric(
+                horizontal: 30.0,
+                vertical: 8.0,
+              ),
+              child: Text(_authMode == AuthMode.Login ? 'ENTRAR' : 'REGISTRAR'),
+              onPressed: _submit,
+            ),
+          FlatButton(
+            onPressed: _switchMode,
+            child: Text(
+              "ALTERNAR P/ ${_authMode == AuthMode.Login ? 'REGISTRAR' : 'LOGIN'}",
+            ),
+            textColor: Theme.of(context).primaryColor,
+          ),
+        ],
       ),
     );
   }
