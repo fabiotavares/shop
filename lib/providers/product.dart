@@ -38,7 +38,7 @@ class Product with ChangeNotifier {
     try {
       final url =
           '${Constants.BASE_API_URL}/userFavorites/$userId/$id.json?auth=$token';
-      
+
       final response = await http.put(
         url,
         body: json.encode(isFavorite),

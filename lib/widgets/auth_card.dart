@@ -11,7 +11,8 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   // atributo para ter acesso ao formulário
   GlobalKey<FormState> _form = GlobalKey();
   // atributo usado p/ controlar a exibição dos botões em caso de processamento
@@ -20,6 +21,46 @@ class _AuthCardState extends State<AuthCard> {
   AuthMode _authMode = AuthMode.Login;
   // controller para a senha
   final _passwordController = TextEditingController();
+
+  // animações
+  AnimationController _controller;
+  Animation<Size> _heighAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // inicializado as variáveis para a animação na mudança de tamanho do card
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+
+    _heighAnimation = Tween(
+      begin: Size(double.infinity, 290),
+      end: Size(double.infinity, 371),
+    ).animate(
+      // tipo de animação
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.linear,
+      ),
+    );
+
+    // atualizando a tela quando um evento de animação ocorrer
+    _heighAnimation.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    // como fiz de forma manual, preciso liberar o recurso aqui
+    _controller.dispose();
+  }
+
   // estrutura para armazenar os dados de login
   final Map<String, String> _authData = {
     'email': '',
@@ -65,9 +106,7 @@ class _AuthCardState extends State<AuthCard> {
     }
 
     // atualizando tela
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   void _showErrorDialog(String msg) {
@@ -93,10 +132,14 @@ class _AuthCardState extends State<AuthCard> {
       setState(() {
         _authMode = AuthMode.Signup;
       });
+      // animação pra frente (crescendo)
+      _controller.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
+      // animação pra trás (diminiundo)
+      _controller.reverse();
     }
   }
 
@@ -111,7 +154,8 @@ class _AuthCardState extends State<AuthCard> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Container(
-        height: _authMode == AuthMode.Login ? 290 : 371,
+        // height: _authMode == AuthMode.Login ? 290 : 371,
+        height: _heighAnimation.value.height,
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
