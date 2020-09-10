@@ -23,29 +23,41 @@ class _AuthCardState extends State<AuthCard>
   final _passwordController = TextEditingController();
 
   // animações
-  // AnimationController _controller;
-  // Animation<Size> _heighAnimation;
+  AnimationController _controller;
+  Animation<double> _opacityAnimation;
+  Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // // inicializado as variáveis para a animação na mudança de tamanho do card
-    // _controller = AnimationController(
-    //   vsync: this,
-    //   duration: Duration(milliseconds: 300),
-    // );
+    // inicializado as variáveis para a animação na mudança de tamanho do card
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
 
-    // _heighAnimation = Tween(
-    //   begin: Size(double.infinity, 290),
-    //   end: Size(double.infinity, 371),
-    // ).animate(
-    //   // tipo de animação
-    //   CurvedAnimation(
-    //     parent: _controller,
-    //     curve: Curves.linear,
-    //   ),
-    // );
+    _opacityAnimation = Tween(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      // tipo de animação
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.linear,
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0, -1.5),
+      end: Offset(0.0, 0.0),
+    ).animate(
+      // tipo de animação
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.linear,
+      ),
+    );
   }
 
   // estrutura para armazenar os dados de login
@@ -120,13 +132,13 @@ class _AuthCardState extends State<AuthCard>
         _authMode = AuthMode.Signup;
       });
       // animação pra frente (crescendo)
-      // _controller.forward();
+      _controller.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
       // animação pra trás (diminiundo)
-      // _controller.reverse();
+      _controller.reverse();
     }
   }
 
@@ -188,22 +200,35 @@ class _AuthCardState extends State<AuthCard>
             controller: _passwordController,
           ),
           // segundo campo de confrimação de senha (exibição condicionada)
-          if (_authMode == AuthMode.Signup)
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Confirmar Senha'),
-              obscureText: true,
-              // só valide se estiver em signup (não sei porque precisa)
-              validator: _authMode == AuthMode.Signup
-                  ? (value) {
-                      // deve ser igual à senha digitada anteriormente
-                      if (value != _passwordController.text) {
-                        return 'Senhas são diferentes!';
-                      }
-                      // se não tem erro retorne null
-                      return null;
-                    }
-                  : null,
+          AnimatedContainer(
+            constraints: BoxConstraints(
+              minHeight: _authMode == AuthMode.Signup ? 60 : 0,
+              maxHeight: _authMode == AuthMode.Signup ? 120 : 0,
             ),
+            duration: Duration(milliseconds: 300),
+            curve: Curves.linear,
+            child: FadeTransition(
+              opacity: _opacityAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: TextFormField(
+                  decoration: InputDecoration(labelText: 'Confirmar Senha'),
+                  obscureText: true,
+                  // só valide se estiver em signup (não sei porque precisa)
+                  validator: _authMode == AuthMode.Signup
+                      ? (value) {
+                          // deve ser igual à senha digitada anteriormente
+                          if (value != _passwordController.text) {
+                            return 'Senhas são diferentes!';
+                          }
+                          // se não tem erro retorne null
+                          return null;
+                        }
+                      : null,
+                ),
+              ),
+            ),
+          ),
           // um espaço apenas...
           Spacer(),
           if (_isLoading)
