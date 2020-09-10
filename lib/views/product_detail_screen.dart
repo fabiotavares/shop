@@ -13,18 +13,19 @@ class ProductDetailScreen extends StatelessWidget {
         ModalRoute.of(context).settings.arguments as Product;
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: Text(product.title),
-      ),
-      body: SingleChildScrollView(
-        // uso quando a tela vai ocupar mais do que é visível
-        child: Column(
-          children: [
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: Hero(
+      // appBar: AppBar(
+      //   centerTitle: false,
+      //   title: Text(product.title),
+      // ),
+      body: CustomScrollView(
+        slivers: [
+          // áreas que podem ter scroll
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(product.title),
+              background: Hero(
                 tag: product.id,
                 child: Image.network(
                   product.imageUrl,
@@ -32,22 +33,27 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10),
-            Text(
-              'R\$ ${product.price}',
-              style: TextStyle(color: Colors.grey, fontSize: 20),
-            ),
-            SizedBox(height: 10),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              width: double.infinity,
-              child: Text(
-                product.description,
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              SizedBox(height: 10),
+              Text(
+                'R\$ ${product.price}',
+                style: TextStyle(color: Colors.grey, fontSize: 20),
                 textAlign: TextAlign.center,
               ),
-            ),
-          ],
-        ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                width: double.infinity,
+                child: Text(
+                  product.description,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ]),
+          ),
+        ],
       ),
     );
   }
