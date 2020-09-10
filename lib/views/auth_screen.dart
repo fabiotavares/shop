@@ -7,32 +7,32 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Center(
-            child: Stack(
-              children: [
-                // container com fundo colorido
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromRGBO(215, 117, 255, 0.5),
-                        Color.fromRGBO(255, 188, 117, 0.9),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
+      body: Center(
+        child: Stack(
+          children: [
+            // container com fundo colorido
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromRGBO(215, 117, 255, 0.5),
+                    Color.fromRGBO(255, 188, 117, 0.9),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                // container com o título da tela de login e área de autenticação
-                Container(
+              ),
+            ),
+            // container com o título da tela de login e área de autenticação
+            Center(
+              child: SingleChildScrollView(
+                child: Container(
                   width: double.infinity,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SizedBox(height: 45),
                       // onde vai aparecer o texto como o nome da aplicação
                       Container(
                         margin: EdgeInsets.only(bottom: 20.0),
@@ -73,9 +73,9 @@ class AuthScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
